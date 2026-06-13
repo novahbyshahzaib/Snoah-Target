@@ -135,19 +135,23 @@ export default function App() {
 
   // Storage load
   useEffect(() => {
-    (async () => {
-      try {
-        const r = await window.storage.get("neet-sched-v1");
-        if (r?.value) setSchedData(JSON.parse(r.value));
-      } catch {}
-      setLoaded(true);
-    })();
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        const r = window.localStorage.getItem("neet-sched-v1");
+        if (r) setSchedData(JSON.parse(r));
+      }
+    } catch {}
+    setLoaded(true);
   }, []);
 
   // Storage save
   useEffect(() => {
     if (!loaded) return;
-    (async () => { try { await window.storage.set("neet-sched-v1", JSON.stringify(schedData)); } catch {} })();
+    try {
+      if (typeof window !== "undefined" && window.localStorage) {
+        window.localStorage.setItem("neet-sched-v1", JSON.stringify(schedData));
+      }
+    } catch {}
   }, [schedData, loaded]);
 
   function getSt(dk, idx) { return schedData[dk]?.[idx] || "pending"; }
